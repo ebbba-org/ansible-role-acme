@@ -1,0 +1,10 @@
+---
+
+extends: default
+
+ignore: |
+  .github/
+rules:
+  line-length: false
+  document-start: enable
+  truthy: false

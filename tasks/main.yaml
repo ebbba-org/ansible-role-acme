@@ -1,0 +1,40 @@
+---
+- name: Install socat package
+  ansible.builtin.apt:
+    name: socat
+    state: present
+
+- name: Clone acme into configured directory.
+  ansible.builtin.git:
+    repo: "{{ acme_letsencrypt_repo }}"
+    dest: "{{ acme_letsencrypt_dir }}"
+    version: "{{ acme_letsencrypt_version }}"
+    update: "{{ acme_letsencrypt_keep_updated }}"
+    force: true
+
+- name: Set acme.sh script variable.
+  ansible.builtin.set_fact:
+    acme_letsencrypt_script: "{{ acme_letsencrypt_dir }}/acme.sh"
+
+- name: Ensure acme.sh is executable.
+  ansible.builtin.file:
+    path: "{{ acme_letsencrypt_script }}"
+    mode: "0755"
+
+- name: ACME.sh install
+  become: true
+  ansible.builtin.command: "{{ acme_letsencrypt_install_command }}"
+  args:
+    chdir: "{{ acme_letsencrypt_dir }}"
+  register: acme_install_result
+  changed_when: "'ok' in acme_install_result.stdout"
+
+- name: Generate or renew certificate with acme.sh
+  become: true
+  ansible.builtin.command: "{{ acme_letsencrypt_create_command }}"
+  environment:
+    email: "{{ acme_letsencrypt_email }}"
+    DO_API_KEY: "{{ DO_API_KEY | default('') }}"
+  register: result
+  changed_when: "'new certificate deployed' in result.stdout"
+  failed_when: "result.rc not in [ 0, 2 ]"

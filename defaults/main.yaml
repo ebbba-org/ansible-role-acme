@@ -1,0 +1,29 @@
+---
+acme_letsencrypt_email: "acme@domain.tld"
+# The hostname - default to "{{ inventory_hostname }}" you may want to use ansible_fqdn instead
+acme_hostname: "{{ inventory_hostname }}"
+# The API URL of the authority
+# Want to use staging certs: https://acme-staging-v02.api.letsencrypt.org/directory
+acme_letsencrypt_api: https://acme-v02.api.letsencrypt.org/directory
+acme_letsencrypt_repo: https://github.com/acmesh-official/acme.sh.git
+# Where the certs will be installed to
+acme_letsencrypt_dir: /opt/acme
+acme_letsencrypt_version: master
+acme_letsencrypt_keep_updated: true
+# https://github.com/acmesh-official/acme.sh/wiki/How-to-issue-a-cert
+acme_letsencrypt_install_command: >-
+  {{ acme_letsencrypt_script }} --install
+  --home /root/.acme.sh
+  --config-home /root/.acme.sh
+  --certhome /root/.acme.sh
+  --days 30
+  --accountemail {{ acme_letsencrypt_email }}
+  --accountkey /root/.acme.sh/account.key
+acme_letsencrypt_create_command: >-
+  {{ acme_letsencrypt_script }} --issue --domain {{ acme_hostname }}
+  --standalone
+  --server letsencrypt
+  --keylength ec-256
+  --pre-hook "systemctl stop nginx.service"
+  --post-hook "systemctl start nginx.service"
+  --server {{ acme_letsencrypt_api }}
