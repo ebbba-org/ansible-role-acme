@@ -1,0 +1,29 @@
+{
+    "categories": [
+      {
+        "title": "## 🚀 Features",
+        "labels": ["feature"]
+      },
+      {
+        "title": "## ⭐ Enhancement",
+        "labels": ["enhancement"]
+      },
+      {
+        "title": "## 🐛 Fixes",
+        "labels": ["fix", "bug"]
+      },
+      {
+        "title": "## 📘 Documentation",
+        "labels": ["documentation"]
+      },
+      {
+        "title": "## 🔐 Security",
+        "labels": ["security"]
+      },
+      {
+        "title": "## 🧪 Tests",
+        "labels": ["test"]
+      }
+    ],
+    "pr_template": "- ${{TITLE}} - Thanks to @${{AUTHOR}} 💙\n   - PR: #${{NUMBER}}"
+}
