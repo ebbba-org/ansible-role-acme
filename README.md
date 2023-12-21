@@ -1,5 +1,13 @@
 # ACME.SH - Ansible Role for requesting SSL/TLS certs
 
+- [ACME.SH - Ansible Role for requesting SSL/TLS certs](#acmesh---ansible-role-for-requesting-ssltls-certs)
+  - [Default Variables](#default-variables)
+  - [Example Usage of this role](#example-usage-of-this-role)
+  - [Playbook example](#playbook-example)
+    - [Variables for apache2 with just one domain](#variables-for-apache2-with-just-one-domain)
+    - [Variables for apache2 with multiple domains](#variables-for-apache2-with-multiple-domains)
+    - [Variables to use DigitalOcean dnsapi certificate generation](#variables-to-use-digitalocean-dnsapi-certificate-generation)
+
 ## Default Variables
 
 | **Variable**                       | **Default**                                          | **Description**                                                                                                             |
