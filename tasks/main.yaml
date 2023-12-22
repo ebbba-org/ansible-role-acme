@@ -32,9 +32,7 @@
 - name: Generate or renew certificate with acme.sh
   become: true
   ansible.builtin.command: "{{ acme_letsencrypt_create_command }}"
-  environment:
-    email: "{{ acme_letsencrypt_email }}"
-    DO_API_KEY: "{{ DO_API_KEY | default('') }}"
+  environment: "{{ acme_environment_varaibles }}"
   register: result
   changed_when: "'new certificate deployed' in result.stdout"
   failed_when: "result.rc not in [ 0, 2 ]"
