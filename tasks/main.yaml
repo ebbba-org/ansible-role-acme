@@ -3,18 +3,19 @@
   ansible.builtin.apt:
     name: socat
     state: present
+    update_cache: true
 
 - name: Clone acme into configured directory.
   ansible.builtin.git:
-    repo: "{{ acme_letsencrypt_repo }}"
-    dest: "{{ acme_letsencrypt_dir }}"
-    version: "{{ acme_letsencrypt_version }}"
-    update: "{{ acme_letsencrypt_keep_updated }}"
+    repo: "{{ acme_git_repo }}"
+    dest: "{{ acme_install_dir }}"
+    version: "{{ acme_install_version }}"
+    update: "{{ acme_install_keep_updated }}"
     force: true
 
 - name: Set acme.sh script variable.
   ansible.builtin.set_fact:
-    acme_letsencrypt_script: "{{ acme_letsencrypt_dir }}/acme.sh"
+    acme_letsencrypt_script: "{{ acme_install_dir }}/acme.sh"
 
 - name: Ensure acme.sh is executable.
   ansible.builtin.file:
@@ -25,16 +26,14 @@
   become: true
   ansible.builtin.command: "{{ acme_letsencrypt_install_command }}"
   args:
-    chdir: "{{ acme_letsencrypt_dir }}"
+    chdir: "{{ acme_install_dir }}"
   register: acme_install_result
   changed_when: "'ok' in acme_install_result.stdout"
 
 - name: Generate or renew certificate with acme.sh
   become: true
   ansible.builtin.command: "{{ acme_letsencrypt_create_command }}"
-  environment:
-    email: "{{ acme_letsencrypt_email }}"
-    DO_API_KEY: "{{ DO_API_KEY | default('') }}"
+  environment: "{{ acme_environment_varaibles }}"
   register: result
   changed_when: "'new certificate deployed' in result.stdout"
   failed_when: "result.rc not in [ 0, 2 ]"

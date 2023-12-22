@@ -1,29 +1,51 @@
 ---
-acme_letsencrypt_email: "acme@domain.tld"
+# The acme.sh mail address where mails will be send to
+acme_email: "acme@domain.tld"
+
 # The hostname - default to "{{ inventory_hostname }}" you may want to use ansible_fqdn instead
 acme_hostname: "{{ inventory_hostname }}"
+
 # The API URL of the authority
 # Want to use staging certs: https://acme-staging-v02.api.letsencrypt.org/directory
-acme_letsencrypt_api: https://acme-v02.api.letsencrypt.org/directory
-acme_letsencrypt_repo: https://github.com/acmesh-official/acme.sh.git
+acme_api_url: https://acme-v02.api.letsencrypt.org/directory
+# acme_api_url: https://acme-staging-v02.api.letsencrypt.org/directory
+
+# The acme.sh repo, in case you run a mirror or fork
+acme_git_repo: https://github.com/acmesh-official/acme.sh.git
+
 # Where the certs will be installed to
-acme_letsencrypt_dir: /opt/acme
-acme_letsencrypt_version: master
-acme_letsencrypt_keep_updated: true
+acme_install_dir: /opt/acme
+acme_install_version: master
+acme_install_keep_updated: true
+
+# The acme.sh folder locations
+acme_home_path: "/root/.acme.sh"
+acme_config_home_path: "/root/.acme.sh"
+acme_certhome_path: "/root/.acme.sh"
+acme_accountkey_path: "/root/.acme.sh/account.key"
+acme_renew_days: "30"
+
 # https://github.com/acmesh-official/acme.sh/wiki/How-to-issue-a-cert
+# The acme.sh instlal command
 acme_letsencrypt_install_command: >-
   {{ acme_letsencrypt_script }} --install
-  --home /root/.acme.sh
-  --config-home /root/.acme.sh
-  --certhome /root/.acme.sh
-  --days 30
-  --accountemail {{ acme_letsencrypt_email }}
-  --accountkey /root/.acme.sh/account.key
+  --home {{ acme_home_path }}
+  --config-home {{ acme_config_home_path }}
+  --certhome {{ acme_certhome_path }}
+  --accountemail {{ acme_email }}
+  --accountkey {{ acme_accountkey_path }}
+
+# The acme.sh create command
 acme_letsencrypt_create_command: >-
-  {{ acme_letsencrypt_script }} --issue --domain {{ acme_hostname }}
+  {{ acme_letsencrypt_script }} --issue --days {{ acme_renew_days }} --domain {{ acme_hostname }}
   --standalone
   --server letsencrypt
   --keylength ec-256
   --pre-hook "systemctl stop nginx.service"
   --post-hook "systemctl start nginx.service"
-  --server {{ acme_letsencrypt_api }}
+  --server {{ acme_api_url }}
+
+# these variables are used in the acme_letsencrypt_create_command task
+acme_environment_varaibles:
+  email: "{{ acme_email }}"
+  DO_API_KEY: "{{ DO_API_KEY | default('') }}"
