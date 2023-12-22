@@ -37,7 +37,7 @@
 - name: Run ACME.SH - We need more SSL/TLS!
   hosts: all
   roles:
-    - role: acme.sh
+    - role: ansible-role-acme
 ```
 
 ### Variables for apache2 with just one domain
