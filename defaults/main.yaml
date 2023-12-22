@@ -23,7 +23,7 @@ acme_home: "/root/.acme.sh"
 acme_config_home: "/root/.acme.sh"
 acme_certhome: "/root/.acme.sh"
 acme_accountkey: "/root/.acme.sh/account.key"
-acme_days: "30"
+acme_renew_days: "30"
 
 # https://github.com/acmesh-official/acme.sh/wiki/How-to-issue-a-cert
 # The acme.sh instlal command
@@ -32,13 +32,12 @@ acme_letsencrypt_install_command: >-
   --home {{ acme_home }}
   --config-home {{ acme_config_home }}
   --certhome {{ acme_certhome }}
-  --days {{ acme_days }}
   --accountemail {{ acme_letsencrypt_email }}
   --accountkey {{ acme_accountkey }}
 
 # The acme.sh create command
 acme_letsencrypt_create_command: >-
-  {{ acme_letsencrypt_script }} --issue --domain {{ acme_hostname }}
+  {{ acme_letsencrypt_script }} --issue --days {{ acme_renew_days }} --domain {{ acme_hostname }}
   --standalone
   --server letsencrypt
   --keylength ec-256
